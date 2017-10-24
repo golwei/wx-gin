@@ -23,12 +23,11 @@ type Product struct {
 }
 
 func main() {
-	//	DB, _ := gorm.Open("sqlite3", "demo.db")
-	db, err := gorm.Open("mysql", "root:654654@tcp(db:3306)/nideshop?charset=utf8&parseTime=True&loc=Local")
-	//	DB.AutoMigrate(&User{}, &Product{})
+	DB, _ := gorm.Open("sqlite3", "demo.db")
+	DB.AutoMigrate(&User{}, &Product{})
 
 	// Initalize
-	Admin := admin.New(&admin.AdminConfig{DB: db})
+	Admin := admin.New(&admin.AdminConfig{DB: DB})
 	//redir
 	Admin.GetRouter().Get("/", func(c *admin.Context) {
 		fmt.Fprint(c.Writer, "hello world~")
