@@ -16,19 +16,22 @@ import (
 // Create another GORM-backend model
 
 type Result struct {
-	Ads []Ad
+	Ads      []Ad
+	Channels []Channel
 }
 
 func main() {
 	//	DB, _ := gorm.Open("sqlite3", "demo.db")
 	db, _ := gorm.Open("mysql", "root:654654@tcp(db:3306)/db3?charset=utf8&parseTime=True&loc=Local")
 	media.RegisterCallbacks(db)
-	//	db.AutoMigrate(&Ad{})
+	db.AutoMigrate(&Ad{}, &Channel{})
 	//=============================
 	var (
-		ads []Ad
+		ads      []Ad
+		channels []Channel
 	)
 
+	Admin := admin.New(&admin.AdminConfig{DB: db})
 	//"id","name", "list_pic_url", "retail_price"
 	/*
 		db.Where("parent_id = ?", 0).Where("name <> ?", "推荐").Find(&categorys)
@@ -40,12 +43,13 @@ func main() {
 		db.Where("ad_position_id = ?", 1).Find(&ads)
 	*/
 	db.Find(&ads)
+	db.Find(&channels)
 	//=============================
 	//=============================
-	result := Result{Ads: ads}
+	result := Result{Ads: ads, Channels: channels}
 	//============
-	Admin := admin.New(&admin.AdminConfig{DB: db})
 	Admin.AddResource(&Ad{})
+	Admin.AddResource(&Channel{})
 
 	//serves
 	mux := http.NewServeMux()
@@ -60,6 +64,6 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, result)
 	})
-	r.Run(":80")
+	r.Run(":8081")
 
 }

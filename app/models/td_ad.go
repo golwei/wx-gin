@@ -15,3 +15,11 @@ type Ad struct {
 	Content      string `orm:"column(content);size(255)"`
 	Image        oss.OSS
 }
+type Channel struct {
+	gorm.Model
+	Name      string `orm:"column(name);size(45)"`
+	Url       string `orm:"column(url);size(255)"`
+	IconUrl   string `orm:"column(icon_url);size(255)"`
+	SortOrder uint   `orm:"column(sort_order)"`
+	Image     oss.OSS
+}
