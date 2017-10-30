@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	. "wx-gin/app/models"
 
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -64,6 +66,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, result)
 	})
-	r.Run(":8080")
+	//	r.Run(":8080")
+	log.Fatal(autotls.Run(r, "wcqt.site"))
 
 }
