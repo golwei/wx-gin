@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	. "wx-gin/app/models"
 
-	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -20,17 +18,19 @@ import (
 type Result struct {
 	Ads      []Ad
 	Channels []Channel
+	Brands   []Brand
 }
 
 func main() {
 	//	DB, _ := gorm.Open("sqlite3", "demo.db")
 	db, _ := gorm.Open("mysql", "root:654654@tcp(db:3306)/db3?charset=utf8&parseTime=True&loc=Local")
 	media.RegisterCallbacks(db)
-	db.AutoMigrate(&Ad{}, &Channel{})
+	db.AutoMigrate(&Ad{}, &Channel{}, &Brand{})
 	//=============================
 	var (
 		ads      []Ad
 		channels []Channel
+		brands   []Brand
 	)
 
 	Admin := admin.New(&admin.AdminConfig{DB: db})
@@ -46,12 +46,14 @@ func main() {
 	*/
 	db.Find(&ads)
 	db.Find(&channels)
+	db.Find(&brands)
 	//=============================
 	//=============================
-	result := Result{Ads: ads, Channels: channels}
+	result := Result{Ads: ads, Channels: channels, Brands: brands}
 	//============
 	Admin.AddResource(&Ad{})
 	Admin.AddResource(&Channel{})
+	Admin.AddResource(&Brand{})
 
 	//serves
 	mux := http.NewServeMux()
@@ -67,6 +69,7 @@ func main() {
 		c.JSON(200, result)
 	})
 	//	r.Run(":8080")
-	log.Fatal(autotls.Run(r, "wcqt.site"))
+	//	log.Fatal(autotls.Run(r, "wcqt.site"))
+	r.Run(":80")
 
 }
