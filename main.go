@@ -19,18 +19,20 @@ type Result struct {
 	Ads      []Ad
 	Channels []Channel
 	Brands   []Brand
+	NewGoods []Goods
 }
 
 func main() {
 	//	DB, _ := gorm.Open("sqlite3", "demo.db")
 	db, _ := gorm.Open("mysql", "root:654654@tcp(db:3306)/db3?charset=utf8&parseTime=True&loc=Local")
 	media.RegisterCallbacks(db)
-	db.AutoMigrate(&Ad{}, &Channel{}, &Brand{})
+	db.AutoMigrate(&Ad{}, &Channel{}, &Brand{}, &Goods{})
 	//=============================
 	var (
 		ads      []Ad
 		channels []Channel
 		brands   []Brand
+		newgoods []Goods
 	)
 
 	Admin := admin.New(&admin.AdminConfig{DB: db})
@@ -47,13 +49,15 @@ func main() {
 	db.Find(&ads)
 	db.Find(&channels)
 	db.Find(&brands)
+	db.Where("is_new = ?", 1).Find(&newgoods)
 	//=============================
 	//=============================
-	result := Result{Ads: ads, Channels: channels, Brands: brands}
+	result := Result{Ads: ads, Channels: channels, Brands: brands, NewGoods: newgoods}
 	//============
 	Admin.AddResource(&Ad{})
 	Admin.AddResource(&Channel{})
 	Admin.AddResource(&Brand{})
+	Admin.AddResource(&Goods{})
 
 	//serves
 	mux := http.NewServeMux()
